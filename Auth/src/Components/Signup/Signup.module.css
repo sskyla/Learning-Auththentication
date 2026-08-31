@@ -24,7 +24,7 @@
 }
 
 .formContainer >a {
-    color: blue;
+    color: gray;
     font-size: 14px;
     text-decoration: none;
     border-bottom: 1px solid transparent;
@@ -32,7 +32,7 @@
 }
 
 .formContainer >a:hover {
-    border-bottom: 1px solid blue;
+    border-bottom: 1px solid gray;
 }
 
 .inputContainer {
@@ -44,6 +44,18 @@
 
 .inputContainer > input{
     padding-inline-start: 1rem;
+    font-size: 16px;
+}
+
+.inputContainer >button {
+    background-color: rgb(114, 114, 255);
+    color: white;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.inputContainer>button:hover {
+    background-color: rgb(20, 20, 240);
 }
 
 .inputContainer >input ,button{
