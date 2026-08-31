@@ -25,3 +25,11 @@ dist-ssr
 
 package.json
 package-lock.json
+Server\.env
+Server\node_modules
+Auth\package-lock.json
+Server\package-lock.json
+Auth\package.json
+Server\node_modules
+Auth\node_modules
+Server\package.json
