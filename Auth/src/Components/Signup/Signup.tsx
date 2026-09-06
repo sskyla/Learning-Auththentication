@@ -3,6 +3,7 @@ import styles from "./Signup.module.css"
 import { useState,ChangeEvent  } from "react"
 import { emailRegex, passwordRegex } from "../Utility/RegEx"
 import toast from "react-hot-toast"
+import axios from "axios"
 
 const Signup = () => {
 
@@ -27,7 +28,7 @@ const Signup = () => {
     
   }
 
-  function handleSignUp(): void {
+  const handleSignUp= async()=> {
     if (!userdetail.username) {
       toast.error("Please enter a valid username")
       return;
@@ -39,6 +40,16 @@ const Signup = () => {
     if (!passwordRegex.test(userdetail.password)) {
       toast.error("Password must be at least 8 characters and must include at least one special characters and one number")
       return;
+    }
+
+    try {
+
+      const response = await axios.post('http://localhost:5000/user/register',userdetail);
+      console.log(response);
+      
+    } catch (error) {
+      console.log(error);
+      
     }
     toast.success("Form Submited")
   }
