@@ -23,7 +23,13 @@ dist-ssr
 *.sln
 *.sw?
 
-Auth\.gitignore
+Auth\node_modules
+Auth\public
+Auth\eslint.config.js
 Auth\package-lock.json
 Auth\package.json
-Auth\public
+
+Server\node_modules
+Server\.env
+Server\package-lock.json
+Server\package.json

@@ -1,6 +1,7 @@
 const UserModel = require('../UserModel/usermodel')
 const otp_generator = require('otp-generator')
 const bcrypt = require('bcrypt')
+const sendEmail = require('../Email service/Email')
 
 const register = async (req,res)=>{
     try {
@@ -10,6 +11,8 @@ const register = async (req,res)=>{
         const isUserExisting = await UserModel.findOne({email:req.body.email})
 
         if(isUserExisting) {
+            console.log("User already exists");
+            
             return res.status(400).json({message:`User with ${req.body.email} already existing.`})
         }
 
@@ -33,6 +36,11 @@ const register = async (req,res)=>{
 
         console.log(newUser);
         await newUser.save()
+
+        const emailbody = `<p>Please click on the link verify your account <b>http://localhost:5000/user/verify/${verificationToken}</b>VERIFY ACCOUNT</p>`
+        const subject = `Verification Email`
+
+        await sendEmail(req.body.email,subject,emailbody)
         
 
 
@@ -54,3 +62,4 @@ const login = async (req,res)=>{
 }
 
 module.exports = {register,login}
+
