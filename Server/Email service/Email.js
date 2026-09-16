@@ -10,27 +10,23 @@ const transporter = nodemailer.createTransport({
 })
 
 const sendEmail = async(to,subject,body) =>{
-    let mailOptions = {
-        to: to,
-        from: process.env.EMAIL,
-        subject:subject,
-        html: body
-    }
+    try {
+        const mailOptions = {
+            from: process.env.EMAIL,
+            to: to,
+            subject: subject,
+            html: body
+        };
+        const info = await transporter.sendMail(mailOptions)
+        console.log("Message ID:",info.messageId);
 
-    await new Promise((resolve,reject) => {
-        transporter.sendMail(mailOptions,(err,res) =>{
-            if(err){
-                console.log(err);
-                reject(err)
-                
-            }
-            else{
-                console.log(res);
-                resolve(res)
-                
-            }
-        })
-    }) 
+        return info;
+        
+    } catch (error) {
+        console.error("Failed sending email:");
+        console.log(error);
+        throw error;        
+    }
 }
 
 module.exports = sendEmail;

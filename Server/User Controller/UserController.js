@@ -3,6 +3,7 @@ const otp_generator = require('otp-generator')
 const bcrypt = require('bcrypt')
 const sendEmail = require('../Email service/Email')
 
+
 const register = async (req,res)=>{
     try {
 
@@ -61,5 +62,34 @@ const login = async (req,res)=>{
     }
 }
 
-module.exports = {register,login}
+const VerifyUser = async (req,res) => {
+    try {
+        console.log(req.params);
+        
+        const token = req.params.token
+        
+        const isTokenValid = await UserModel.findOne(
+            {
+                'verificationToken.token':token,
+                'verificationToken.expires': {$gt : new Date()}
+            })
+            console.log(isTokenValid);
+
+            if(!isTokenValid) {
+                return res.status(400).json({message:"Token invalid or expired"})
+            }
+            isTokenValid.isVerified = true
+            
+            await isTokenValid.save()
+            
+
+            res.send("Account Verified successfuly")
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message:"Server Error"})
+        
+    }
+}
+
+module.exports = {register,login,VerifyUser}
 
