@@ -3,6 +3,7 @@ import styles from "./Login.module.css"
 import { useState,ChangeEvent  } from "react"
 import { emailRegex, passwordRegex } from "../Utility/RegEx"
 import toast from "react-hot-toast"
+import axios from "axios"
 
 const Login = () => {
 
@@ -26,16 +27,27 @@ const Login = () => {
     
   }
 
-  function handleLogin(): void {
+  const handleLogin = async() => {
     if (!emailRegex.test(userdetail.email)) {
       toast.error("Please enter a valid Email address")
       return;
     }
     if (!passwordRegex.test(userdetail.password)) {
-      toast.error("Password must be at least 8 characters and must include at least one special characters and one number")
+      toast.error("Password must be at least 8 characters and must include at least one special characters and one number"
+      );
       return;
     }
-    toast.success("Form Submited")
+    try {
+
+      console.log("Data login:", userdetail);
+      const response = await axios.post(`${import.meta.env.VITE_BASE_SERVER_URL}/user/login`,userdetail 
+      );
+      console.log(response);
+      toast.success(response.data.message);
+      
+    } catch (error:any) {
+      toast.error(error.response.data.message);
+    }
   }
 
   return (

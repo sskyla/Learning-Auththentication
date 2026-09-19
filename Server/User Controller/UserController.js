@@ -46,19 +46,39 @@ const register = async (req,res)=>{
 
 
 
-        res.json({message:"User saved successfully"})
+        res.json({message:"Verification link sent to your EMAIL."})
     } catch (error) {
-        res.json(error)
+        res.json({message: "Something went wrong"})
     }
 }
 
 const login = async (req,res)=>{
     try {
         console.log(req.body);
+
+        const isUserExisting = await UserModel.findOne({email:req.body.email})
+        console.log(isUserExisting);
         
-        res.json("Working succesfully.")
+        if(!isUserExisting) {
+            return res.status(400).json({message:`User with ${req.body.email} don't existing.`})
+        }
+
+        if(!isUserExisting.isVerified){
+            return res.status(400).json({message:`User is not Verified. Please click the link in your Email to verify`})
+
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(req.body.password,isUserExisting.password)
+
+        if(!isPasswordCorrect){
+            return res.status(400).json({message:`Invalid Credentials.`})
+        }
+
+        // create JWT
+        
+        res.json({message:`User Logged in succesfuly`})
     } catch (error) {
-        res.json(error)
+        res.json({message:`Something went wrong`})
     }
 }
 
@@ -76,8 +96,13 @@ const VerifyUser = async (req,res) => {
             console.log(isTokenValid);
 
             if(!isTokenValid) {
-                return res.status(400).json({message:"Token invalid or expired"})
+                return res.send(`<p>Token invalid or expired</p> <a href="http://localhost:5000/user/resendverification/${token}">Resend verification</a>`)
             }
+
+            if(isTokenValid){
+                return res.send("Account already Verified successfuly.Please Login")
+            }
+
             isTokenValid.isVerified = true
             
             await isTokenValid.save()
@@ -91,5 +116,44 @@ const VerifyUser = async (req,res) => {
     }
 }
 
-module.exports = {register,login,VerifyUser}
+    const resendverification = async (req,res) => {
+        try {
+            
+            const token = req.params.token
+
+            const user = await UserModel.findOne(
+            {
+                'verificationToken.token':token,
+                'isVerified': false
+            })
+
+            const verificationToken = otp_generator.generate(6,{upperCaseAlphabets: false, specialChars: false})
+
+            const expires = new Date();
+            expires.setMinutes(expires.getMinutes() + 5);
+
+            user.verificationToken = {
+                expires: expires,
+                token: verificationToken
+            }
+
+            await user.save()
+            
+
+            const emailbody = `<p>Please click on the link verify your account <b>http://localhost:5000/user/verify/${verificationToken}</b>VERIFY ACCOUNT</p>`
+            const subject = `Verification Email`
+
+            await sendEmail(user.email,subject,emailbody)
+            res.send("Please cek Your email for a new verification")
+
+
+        } catch (error) {
+            console.log("RESEND ERROR:", error);
+            res.status(500).send("Something wrong");
+            
+        }
+        
+    }
+
+module.exports = {register,login,VerifyUser,resendverification}
 

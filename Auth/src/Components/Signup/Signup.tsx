@@ -46,9 +46,10 @@ const Signup = () => {
 
       const response = await axios.post('http://localhost:5000/user/register',userdetail);
       console.log(response);
-      
-    } catch (error) {
-      console.log(error);
+      toast.success(response.data.message);
+    } catch (error:any) {
+      toast.error(error.response.data.message);
+
       
     }
     toast.success("Form Submited")
