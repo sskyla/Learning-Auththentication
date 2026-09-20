@@ -2,6 +2,7 @@ const UserModel = require('../UserModel/usermodel')
 const otp_generator = require('otp-generator')
 const bcrypt = require('bcrypt')
 const sendEmail = require('../Email service/Email')
+const jwt = require('jsonwebtoken')
 
 
 const register = async (req,res)=>{
@@ -76,7 +77,15 @@ const login = async (req,res)=>{
 
         // create JWT
         
-        res.json({message:`User Logged in succesfuly`})
+        const jwtPayload = {
+            id : isUserExisting.id
+        }
+
+        const token = jwt.sign(jwtPayload,process.env.SECRET,{expiresIn:'1m'})
+        console.log(token);
+        
+        
+        res.json({message:`User Logged in succesfuly`,token})
     } catch (error) {
         res.json({message:`Something went wrong`})
     }

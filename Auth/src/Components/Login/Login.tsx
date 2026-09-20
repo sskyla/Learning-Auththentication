@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import styles from "./Login.module.css"
 import { useState,ChangeEvent  } from "react"
 import { emailRegex, passwordRegex } from "../Utility/RegEx"
@@ -13,6 +13,8 @@ const Login = () => {
   })
 
   const [Show, setShow] = useState(false)
+
+  const navigate = useNavigate()
 
   function handleInputChange(event: ChangeEvent<HTMLInputElement, HTMLInputElement>): void {
     const {name,value} = event.target;
@@ -44,7 +46,9 @@ const Login = () => {
       );
       console.log(response);
       toast.success(response.data.message);
-      
+
+      localStorage.setItem("token",response.data.token);
+      navigate("/home")
     } catch (error:any) {
       toast.error(error.response.data.message);
     }

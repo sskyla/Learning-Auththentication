@@ -22,9 +22,13 @@ lerna-debug.log*
 *.sln
 *.sw?
 
+# Dependencies - wajib di-ignore, install ulang via npm install
 **/node_modules/
-**/dist/
+
+# Build output
 **/build/
+
+
 **/.env
 **/.env.*
 !.env.example
