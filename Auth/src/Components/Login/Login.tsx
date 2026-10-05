@@ -4,6 +4,9 @@ import { useState,ChangeEvent  } from "react"
 import { emailRegex, passwordRegex } from "../Utility/RegEx"
 import toast from "react-hot-toast"
 import axios from "axios"
+import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons"
+import { useGoogleLogin } from "@react-oauth/google"
+
 
 const Login = () => {
 
@@ -54,10 +57,27 @@ const Login = () => {
     }
   }
 
+  const handleLoginWithGoogle = useGoogleLogin({
+    onSuccess : async (response :any) =>{
+      console.log(response);
+      
+    },
+    onError : (error:any)=>{
+      console.log(error);
+      
+    }
+  })
+
   return (
     <div className={styles.container}>
       <div className={styles.formContainer}>
         <h2>Login..</h2>
+        <div className={styles.social}>
+          <div><FacebookLoginButton></FacebookLoginButton></div>
+          <div onClick={handleLoginWithGoogle}>
+            <GoogleLoginButton></GoogleLoginButton>
+          </div>
+        </div>
         <div className={styles.inputContainer}>
           <input 
           value={userdetail.email}

@@ -110,3 +110,8 @@
   border-bottom-color: gray;
 }
 
+
+.social{
+    border: 1px gray;
+    width: 100%;
+}

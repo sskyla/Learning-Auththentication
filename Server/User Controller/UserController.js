@@ -81,7 +81,7 @@ const login = async (req,res)=>{
             id : isUserExisting.id
         }
 
-        const token = jwt.sign(jwtPayload,process.env.SECRET,{expiresIn:'1m'})
+        const token = jwt.sign(jwtPayload,process.env.SECRET,{expiresIn:'10m'})
         console.log(token);
         
         
@@ -164,5 +164,14 @@ const VerifyUser = async (req,res) => {
         
     }
 
-module.exports = {register,login,VerifyUser,resendverification}
+    const updateUser = async(req,res)=>{
+        try {
+            console.log(req.decodeData);
+            res.json({message: req.decodeData})
+        } catch (error) {
+            res.json({message:`Something went wrong`})
+        }
+    }
+
+module.exports = {register,login,VerifyUser,resendverification,updateUser}
 
