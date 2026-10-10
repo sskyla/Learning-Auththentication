@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom"
 import styles from "./Signup.module.css"
-import { useState,ChangeEvent  } from "react"
+import { useState } from "react"
+import type { ChangeEvent } from "react"
 import { emailRegex, passwordRegex } from "../Utility/RegEx"
 import toast from "react-hot-toast"
 import axios from "axios"
