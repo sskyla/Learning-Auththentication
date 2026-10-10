@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import styles from "./Login.module.css"
 import { useState,ChangeEvent  } from "react"
-import { emailRegex, passwordRegex } from "../Utility/RegEx"
+import { emailRegex } from "../Utility/RegEx"
 import toast from "react-hot-toast"
 import axios from "axios"
 import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons"
@@ -37,9 +37,8 @@ const Login = () => {
       toast.error("Please enter a valid Email address")
       return;
     }
-    if (!passwordRegex.test(userdetail.password)) {
-      toast.error("Password must be at least 8 characters and must include at least one special characters and one number"
-      );
+    if (!userdetail.password) {
+      toast.error("Please enter your password");
       return;
     }
     try {
@@ -53,18 +52,42 @@ const Login = () => {
       localStorage.setItem("token",response.data.token);
       navigate("/home")
     } catch (error:any) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "Login failed");
     }
   }
 
   const handleLoginWithGoogle = useGoogleLogin({
-    onSuccess : async (response :any) =>{
-      console.log(response);
-      
+    onSuccess: async (tokenResponse:any) =>{
+      try {
+        console.log(tokenResponse);
+
+        const res = await axios.get("https://www.googleapis.com/oauth2/v3/userinfo",
+          {headers:{Authorization:`Bearer ${tokenResponse.access_token}`}});
+
+        console.log(res.data);
+
+        const googlePayload = {
+          username : res.data.name,
+          email : res.data.email,
+        }
+        console.log("Google login payload:", googlePayload);
+
+        console.log("Data login:", googlePayload);
+        const response = await axios.post(`${import.meta.env.VITE_BASE_SERVER_URL}/user/google-login`,googlePayload
+        );
+        console.log(response);
+        toast.success(response.data.message);
+
+        localStorage.setItem("token",response.data.token);
+        navigate("/home")
+      } catch (error:any) {
+        console.log(error);
+        toast.error(error.response?.data?.message || "Google login failed");
+      }
     },
-    onError : (error:any)=>{
+    onError:(error:any)=>{
       console.log(error);
-      
+      toast.error("Google login cancelled or failed");
     }
   })
 
@@ -74,7 +97,7 @@ const Login = () => {
         <h2>Login..</h2>
         <div className={styles.social}>
           <div><FacebookLoginButton></FacebookLoginButton></div>
-          <div onClick={handleLoginWithGoogle}>
+          <div onClick={() => handleLoginWithGoogle()}>
             <GoogleLoginButton></GoogleLoginButton>
           </div>
         </div>
