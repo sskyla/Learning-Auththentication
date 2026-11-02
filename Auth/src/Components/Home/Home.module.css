@@ -1,0 +1,107 @@
+.container{
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.container nav{
+    display: flex;
+    background-color: grey;
+    align-items: center;
+    padding: 1rem;
+    justify-content: space-between;
+}
+
+.logoutBtn{
+    border: 1rem;
+    background-color: red;
+    color: whitesmoke;
+    font-weight: 500;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.logoutBtn:hover{
+    scale: 1.1;
+}
+
+.mainContainer{
+    display: flex;
+    justify-content: center;
+    column-gap: 2rem;
+    height: 50vh;
+}
+
+.mainContainer >div{
+    /* border: 1px solid red; */
+    /* flex: 1; */
+    min-width: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    border-radius: 2rem;
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px;
+}
+
+.mainContainer div p{
+    margin: 0;
+}
+
+.editContainer {
+    min-width: 380px;
+    row-gap: 2rem;
+}
+
+.editContainer >input ,button{
+    height: 48px;
+    border-radius: 2rem;
+    outline: 0;
+    border: 0;
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+}
+
+.editContainer  input{
+    padding-inline-start: 1rem;
+    font-size: 16px;
+}
+
+.editContainer >button {
+    background-color: rgb(114, 114, 255);
+    color: white;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.editContainer>button:hover {
+    background-color: rgb(20, 20, 240);
+}
+
+
+.passwordContainer input{
+    padding-inline-start: 1rem;
+    width: 100%;
+    height: 48px;
+    border-radius: 2rem;
+    outline: 0;
+    border: 0;
+    padding-inline-start: 1rem;
+    font-size: 16px;
+    box-shadow: rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.07) 0px 2px 2px, rgba(0, 0, 0, 0.07) 0px 4px 4px, rgba(0, 0, 0, 0.07) 0px 8px 8px, rgba(0, 0, 0, 0.07) 0px 16px 16px;
+}
+
+.passwordContainer{
+    position: relative;
+}
+
+.passwordContainer button{
+    position: absolute;
+    border-radius: 0;
+    background-color: white;
+    box-shadow: none;
+    cursor: pointer;
+    top: 13px;
+    right: 8px;
+    height: 18px;
+}

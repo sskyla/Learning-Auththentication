@@ -4,6 +4,7 @@ const bcrypt = require('bcrypt')
 const crypto = require('crypto')
 const sendEmail = require('../Email service/Email')
 const jwt = require('jsonwebtoken')
+const { error } = require('console')
 
 // Generate password yang dijamin lolos passwordRegex frontend:
 // /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
@@ -308,5 +309,88 @@ const VerifyUser = async (req,res) => {
         }
     }
 
-module.exports = {register,login,VerifyUser,resendverification,updateUser,googleLogin}
+        const forgetPassword = async (req,res) => {
+
+            try {
+                const isUserExisting = await UserModel.findOne({email: req.body.email})
+                if(!isUserExisting){
+                    return res.status(400).json({message:`User with ${req.body.email} don't existing.`})
+                }
+
+                if (req.body.isOTPVerified){
+
+                    const hashedpassword = await bcrypt.hash(req.body.password,10)
+
+                    isUserExisting.password = hashedpassword
+                    await isUserExisting.save()
+
+                    const emailbody = `<p>Your password reset successfully</p>`
+                    const subject = `Reset Password`
+
+                    await sendEmail(isUserExisting.email,subject,emailbody)
+                    return res.status(200).json({message:'Password reset successfully'})
+
+                }
+
+                    const OTP = otp_generator.generate(6,{upperCaseAlphabets: false, specialChars: false})
+
+                    const expires = new Date();
+                    expires.setMinutes(expires.getMinutes() + 5);
+
+                    isUserExisting.OTP_verification = {
+                        OTP,
+                        expires
+                    }
+            
+
+                    await isUserExisting.save()
+
+                    const emailbody = `<p>Your OTP for reset password is <b>${OTP}</b><br>OTP expired in 5 mnt</br></p>`
+                    const subject = `Password reset`
+
+                    await sendEmail(isUserExisting.email,subject,emailbody)
+                    res.status(200).json({message: `OTP send successfully`})
+
+
+            } catch (error) {
+                console.log(error);
+                
+                res.status(500).json({message: `Something went wrong`})
+                console.log(error);
+            }
+        }
+
+            const verifypassOTP = async (req,res) => {
+                try {
+
+                    console.log(req.body);
+                    
+                    const {OTP} = req.body
+                    const verifypassOTP = await UserModel.findOne(
+                        {
+                            'OTP_verification.OTP':OTP,
+                            'OTP_verification.expires': {$gt : new Date()}
+                        }
+                    )
+                    console.log(verifypassOTP);
+
+                    if (!verifypassOTP) {
+                        return res.status(400).json({message: "OTP Expired"})
+                    }
+
+                    if(verifypassOTP){
+                        return res.status(200).json({message:"Verify OTP reset password successfully"})
+                    }
+                    
+                    
+                } catch (error) {
+                    res.status(500).json({message:"Something went wrong"})
+                    console.log(error);
+                }
+                
+            }
+            
+        
+
+module.exports = {register,login,VerifyUser,resendverification,updateUser,googleLogin,forgetPassword,verifypassOTP}
 
