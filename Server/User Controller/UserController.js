@@ -389,8 +389,27 @@ const VerifyUser = async (req,res) => {
                 }
                 
             }
-            
+
+            const getUser = async (req,res) => {
+                try {
+                    console.log(req.decodeData);
+
+                    const { id } = req.decodeData
+                    const data = await UserModel.findById(id)
+                    console.log(data);
+
+                    const user = {
+                        email: data.email,
+                        username: data.username
+                    }
+                    res.json({user:user})
+                    
+                    
+                } catch (error) {
+                    res.status(500).json({message:"Something went wrong"})
+                }
+            }
         
 
-module.exports = {register,login,VerifyUser,resendverification,updateUser,googleLogin,forgetPassword,verifypassOTP}
+module.exports = {register,login,VerifyUser,resendverification,updateUser,googleLogin,forgetPassword,verifypassOTP,getUser}
 

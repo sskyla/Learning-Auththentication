@@ -1,5 +1,5 @@
 const jwt_AUTH = require('../midleware/JWT_Auth');
-const {register,login,VerifyUser,resendverification,updateUser,googleLogin,forgetPassword,verifypassOTP} = require('../User Controller/UserController');
+const {register,login,VerifyUser,resendverification,updateUser,googleLogin,forgetPassword,verifypassOTP,getUser} = require('../User Controller/UserController');
 
 const router = require('express').Router();
 
@@ -12,6 +12,7 @@ router.get('/verify/:token',VerifyUser)
 router.get('/resendverification/:token',resendverification)
 router.post('/resetPassword',forgetPassword)
 router.post('/verifypassOTP/',verifypassOTP)
+router.get('/',jwt_AUTH,getUser)
 
 
 
