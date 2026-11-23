@@ -29,7 +29,7 @@
     display: flex;
     justify-content: center;
     column-gap: 2rem;
-    height: 50vh;
+    height: 70vh;
 }
 
 .mainContainer >div{
@@ -47,6 +47,11 @@
 
 .mainContainer div p{
     margin: 0;
+}
+
+.user{
+    font-size: 18px;
+    height: 300px;
 }
 
 .editContainer {
@@ -117,4 +122,16 @@
 
 .passwordEdit{
     display: flex;
+}
+
+.button{
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    column-gap: 1rem;
+}
+
+.button button{
+    min-width: 50px;
+    border-radius: 0;
 }

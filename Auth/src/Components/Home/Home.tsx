@@ -2,7 +2,7 @@
 import { useNavigate } from "react-router-dom";
 import styles from "./Home.module.css"
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import axios from "axios";
 
 interface User  {
@@ -14,7 +14,18 @@ const Home = () => {
   const [Show,setShow]=useState(false)
   const navigate = useNavigate();
 
+  const [newuserData, setnewuserData] = useState({
+    username:"",
+    email:"",
+    password:""
+  })
+
   const [user, setuser] = useState<User | null>(null)
+  const [isEdit, setisEdit] = useState({
+    username: false,
+    email: false,
+    password: false
+  })
 
   const getUser = async () => {
     try {
@@ -39,6 +50,15 @@ const Home = () => {
   },[])
 
   
+  function handleChange(event: ChangeEvent<HTMLInputElement, HTMLInputElement>): void {
+    const {name,value}= event.target;
+    setnewuserData((prev)=>({
+      ...prev,
+      [name]: value
+    }));
+    
+  }
+
   return (
     <div className={styles.container}>
      {user && (<nav>
@@ -53,7 +73,7 @@ const Home = () => {
       </nav>)}
       
       {user && (<div className={styles.mainContainer}>
-        <div>
+        <div className={styles.user}>
           User detail
           <p>Username : {user.username}</p>
           <p>Email : {user.email}</p>
@@ -61,22 +81,82 @@ const Home = () => {
         <div className={styles.editContainer}>
           Update User
           <div>
-          <input placeholder="Update User" type="text" />
-          <button className={styles.edit}>EDIT</button>
+          <input
+          name="username" value={newuserData.username} onChange={handleChange}
+          disabled={!isEdit.username} placeholder="Update Username " type="text" />
+          <button onClick={()=>{
+            setisEdit((prev)=>({
+              ...prev,
+              username:true
+            }))
+          }} className={styles.edit}>EDIT</button>
+          {isEdit.username && (<div className={styles.button}>
+            <button>Save</button>
+            <button onClick={()=>{
+            setisEdit((prev)=>({
+              ...prev,
+              username:false
+            }));
+            setnewuserData((prev)=>({
+              ...prev,
+              username:""
+            }))
+          }} >Cancle</button>
+          </div>)}
           </div>
           <div>
-          <input placeholder="Update Email" type="text" />
-          <button className={styles.edit}>EDIT</button>
+          <input 
+          name="email" value={newuserData.email} onChange={handleChange}
+          disabled={!isEdit.email} placeholder="Update Email" type="text" />
+          <button onClick={()=>{
+            setisEdit((prev)=>({
+              ...prev,
+              email:true
+            }))
+          }} className={styles.edit}>EDIT
+          </button>
+          {isEdit.email && (<div className={styles.button}>
+            <button>Save</button>
+            <button onClick={()=>{
+            setisEdit((prev)=>({
+              ...prev,
+              email:false
+            }));
+            setnewuserData((prev)=>({
+              ...prev,
+              email:""
+            }))
+          }}>Cancle</button>
+          </div>)}
           </div>
           <div className={styles.passwordEdit}>
           <div className={styles.passwordContainer}>
-          <input placeholder="Update Password" type={Show? "text" : "password"} name="password" />
+          <input name="password" value={newuserData.password} onChange={handleChange} disabled={!isEdit.password} placeholder="Update Password" type={Show? "text" : "password"} />
           <button onClick={()=>{
             setShow(!Show)
           }}>{Show ? "Hide" : "Show"}</button>
           </div>
-          <button className={styles.edit}>EDIT</button>
+          <button onClick={()=>{
+            setisEdit((prev)=>({
+              ...prev,
+              password:true
+            }))
+          }} className={styles.edit}>EDIT
+          </button>
           </div>
+          {isEdit.password &&(<div className={styles.button}>
+            <button>Save</button>
+            <button onClick={()=>{
+            setisEdit((prev)=>({
+              ...prev,
+              password:false
+            }));
+            setnewuserData((prev)=>({
+              ...prev,
+              password:""
+            }))
+          }}>Cancle</button>
+          </div>)}
         </div>
       </div>)}
     </div>
