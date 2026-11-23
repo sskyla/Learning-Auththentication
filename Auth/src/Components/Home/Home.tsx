@@ -4,6 +4,7 @@ import styles from "./Home.module.css"
 import toast from "react-hot-toast";
 import { useEffect, useState, type ChangeEvent } from "react";
 import axios from "axios";
+import { emailRegex } from "../Utility/RegEx";
 
 interface User  {
   username:string,
@@ -56,7 +57,33 @@ const Home = () => {
       ...prev,
       [name]: value
     }));
+  }
+
+  const updateUserData = async (type:string)=> {
+    if (!emailRegex.test(newuserData.email) && type === "email") {
+      toast.error("Please enter a valid Email address")
+      return;
+    }
+    if (!newuserData.password && type ==="password") {
+      toast.error("Please enter your password");
+      return;
+    }
+
+    if (!newuserData.username && type ==="username") {
+      toast.error("Please enter a valid username");
+      return;
+    }
     
+    try {
+      const response = await axios.put(`${import.meta.env.VITE_BASE_SERVER_URL}/user/updateuser`,{type,newuserData},
+        {
+          headers:{Authorization: `Bearer ${localStorage.getItem("token")}`}
+        }
+      )
+    } catch (error) {
+      console.log(error);
+      
+    }
   }
 
   return (
@@ -91,7 +118,7 @@ const Home = () => {
             }))
           }} className={styles.edit}>EDIT</button>
           {isEdit.username && (<div className={styles.button}>
-            <button>Save</button>
+            <button onClick={()=>{updateUserData("username")}}>Save</button>
             <button onClick={()=>{
             setisEdit((prev)=>({
               ...prev,
@@ -116,7 +143,7 @@ const Home = () => {
           }} className={styles.edit}>EDIT
           </button>
           {isEdit.email && (<div className={styles.button}>
-            <button>Save</button>
+            <button onClick={()=>{updateUserData("email")}}>Save</button>
             <button onClick={()=>{
             setisEdit((prev)=>({
               ...prev,
@@ -145,7 +172,7 @@ const Home = () => {
           </button>
           </div>
           {isEdit.password &&(<div className={styles.button}>
-            <button>Save</button>
+            <button onClick={()=>{updateUserData("password")}}>Save</button>
             <button onClick={()=>{
             setisEdit((prev)=>({
               ...prev,

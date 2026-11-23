@@ -238,6 +238,8 @@ const VerifyUser = async (req,res) => {
     const updateUser = async(req,res)=>{
         try {
             console.log(req.decodeData);
+            console.log(req.body);
+            
             res.json({message: req.decodeData})
         } catch (error) {
             res.json({message:`Something went wrong`})
