@@ -4,6 +4,7 @@ import { emailRegex, passwordRegex } from "../Utility/RegEx"
 import toast from "react-hot-toast"
 import axios from "axios"
 import { Link, useNavigate } from "react-router-dom"
+import Loader from "../Loader/loader"
 
 
 const Forgetpass = () => {
@@ -85,6 +86,7 @@ const Passwordcomponent =({email}) =>{
   const [password,setpassword]= useState("");
   const [Show, setShow] = useState(false)
   const navigate = useNavigate()
+  const [isLoading, setisLoading] = useState(false)
 
   const resetPassword = async () => {
     if (!passwordRegex.test(password)) {
@@ -93,13 +95,16 @@ const Passwordcomponent =({email}) =>{
     }
 
      try {
+      setisLoading(true)
       const response = await axios.post(`${import.meta.env.VITE_BASE_SERVER_URL}/user/resetPassword`,{password, isOTPVerified:true,email:localStorage.getItem("email")});
       toast.success(response.data.message)
-
+      
       navigate("/")
       localStorage.removeItem("email")
+      setisLoading(false)
     } catch (error:any) {
       toast.error(error.response.data.message)
+      setisLoading(false)
       
     }
 
@@ -117,7 +122,7 @@ const Passwordcomponent =({email}) =>{
           }}>{Show ? "Hide" : "Show"}</button>
     </div>
     <div className={styles.inputContainer}>
-            <button onClick={resetPassword}>Reset Password</button>
+            <button onClick={resetPassword}>{isLoading ? <Loader/>:"Reset Password"}</button>
           </div>
     </div>
   )

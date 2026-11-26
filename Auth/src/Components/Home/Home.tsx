@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useEffect, useState, type ChangeEvent } from "react";
 import axios from "axios";
 import { emailRegex } from "../Utility/RegEx";
+import Loader from "../Loader/loader";
 
 interface User  {
   username:string,
@@ -27,6 +28,8 @@ const Home = () => {
     email: false,
     password: false
   })
+
+  const [isLoading, setisLoading] = useState(false)
 
   const getUser = async () => {
     try {
@@ -75,14 +78,20 @@ const Home = () => {
     }
     
     try {
+      setisLoading(true)
       const response = await axios.put(`${import.meta.env.VITE_BASE_SERVER_URL}/user/updateuser`,{type,newuserData},
         {
           headers:{Authorization: `Bearer ${localStorage.getItem("token")}`}
         }
       )
+      toast.success(response.data.message)
+      setisEdit({email:false,password:false,username:false})
+      setnewuserData({email:"",password:"",username:""})
+      getUser()
+      setisLoading(false)
     } catch (error) {
+      setisLoading(false)
       console.log(error);
-      
     }
   }
 
@@ -118,17 +127,19 @@ const Home = () => {
             }))
           }} className={styles.edit}>EDIT</button>
           {isEdit.username && (<div className={styles.button}>
+            {isLoading ? <Loader/>:<>
             <button onClick={()=>{updateUserData("username")}}>Save</button>
             <button onClick={()=>{
-            setisEdit((prev)=>({
-              ...prev,
-              username:false
-            }));
-            setnewuserData((prev)=>({
-              ...prev,
-              username:""
-            }))
-          }} >Cancle</button>
+              setisEdit((prev)=>({
+                ...prev,
+                username:false
+              }));
+              setnewuserData((prev)=>({
+                ...prev,
+                username:""
+              }))
+            }} >Cancle</button>
+            </>}
           </div>)}
           </div>
           <div>
@@ -143,17 +154,19 @@ const Home = () => {
           }} className={styles.edit}>EDIT
           </button>
           {isEdit.email && (<div className={styles.button}>
+            {isLoading ? <Loader/>:<>
             <button onClick={()=>{updateUserData("email")}}>Save</button>
             <button onClick={()=>{
-            setisEdit((prev)=>({
-              ...prev,
-              email:false
-            }));
-            setnewuserData((prev)=>({
-              ...prev,
-              email:""
-            }))
-          }}>Cancle</button>
+              setisEdit((prev)=>({
+                ...prev,
+                email:false
+              }));
+              setnewuserData((prev)=>({
+                ...prev,
+                email:""
+              }))
+            }}>Cancle</button>
+            </>}
           </div>)}
           </div>
           <div className={styles.passwordEdit}>
@@ -172,17 +185,19 @@ const Home = () => {
           </button>
           </div>
           {isEdit.password &&(<div className={styles.button}>
+            {isLoading ? <Loader/>:<>
             <button onClick={()=>{updateUserData("password")}}>Save</button>
             <button onClick={()=>{
-            setisEdit((prev)=>({
-              ...prev,
-              password:false
-            }));
-            setnewuserData((prev)=>({
-              ...prev,
-              password:""
-            }))
-          }}>Cancle</button>
+              setisEdit((prev)=>({
+                ...prev,
+                password:false
+              }));
+              setnewuserData((prev)=>({
+                ...prev,
+                password:""
+              }))
+            }}>Cancle</button>
+            </>}
           </div>)}
         </div>
       </div>)}

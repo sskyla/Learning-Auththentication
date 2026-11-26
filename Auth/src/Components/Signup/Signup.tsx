@@ -5,6 +5,7 @@ import type { ChangeEvent } from "react"
 import { emailRegex, passwordRegex } from "../Utility/RegEx"
 import toast from "react-hot-toast"
 import axios from "axios"
+import Loader from "../Loader/loader"
 
 const Signup = () => {
 
@@ -15,7 +16,7 @@ const Signup = () => {
   })
 
   const [Show, setShow] = useState(false)
-
+  const [isLoading, setisLoading] = useState(false)
   function handleInputChange(event: ChangeEvent<HTMLInputElement, HTMLInputElement>): void {
     const {name,value} = event.target;
     // console.log(name,value);
@@ -44,12 +45,14 @@ const Signup = () => {
     }
 
     try {
-
+      setisLoading(true)
       const response = await axios.post('http://localhost:5000/user/register',userdetail);
       console.log(response);
       toast.success(response.data.message);
+      setisLoading(false)
     } catch (error:any) {
       toast.error(error.response.data.message);
+      setisLoading(false)
 
       
     }
@@ -75,7 +78,7 @@ const Signup = () => {
             setShow(!Show)
           }}>{Show ? "Hide" : "Show"}</button>
           </div>
-          <button onClick={handleSignUp}>Sign Up</button>
+          <button onClick={handleSignUp}>{isLoading ? <Loader/>:"Sign Up"}</button>
         </div>
         <Link to="/">Already have an account? Login</Link>
       </div>

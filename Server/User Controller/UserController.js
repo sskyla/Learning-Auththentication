@@ -237,10 +237,58 @@ const VerifyUser = async (req,res) => {
 
     const updateUser = async(req,res)=>{
         try {
-            console.log(req.decodeData);
+
+            const {id} = req.decodeData
+            const {type} = req.body
+            console.log(id);
             console.log(req.body);
+
+            const user = await UserModel.findById(id)
+
+            switch (type) {
+                case "username": { 
+
+                    user.username = req.body.newuserData.username
+                    const emailbody = `<p>Username updated</p>`
+                    const subject = `Username update successfully`
+                    
+                    await sendEmail(user.email,subject,emailbody)
+                    await user.save()
+                    break;
+
+                }
+
+                case "email": {
+
+                    user.email =req.body.newUser.email
+                    await user.save()
+                    const emailbody = `<p>Email updated</p>`
+                    const subject = `Email update successfully`
+                    await sendEmail(user.email,subject,emailbody)
+
+                    break;
+                }
+
+                case "password": {
+                    const hashedpassword = await bcrypt.hash(req.body.newuserData.password, 10)
+                    user.password = hashedpassword
+                    await user.save()
+                    const emailbody = `<p>Password updated</p>`
+                    const subject = `Password update successfully`
+                    await sendEmail(user.email,subject,emailbody)
+
+                    break;
+
+                }
+                
+
+            }
             
-            res.json({message: req.decodeData})
+
+            console.log(user);
+            
+            
+            res.json({message: "user updated successfully"})
         } catch (error) {
             res.json({message:`Something went wrong`})
         }

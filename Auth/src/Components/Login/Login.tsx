@@ -7,14 +7,15 @@ import toast from "react-hot-toast"
 import axios from "axios"
 import { FacebookLoginButton, GoogleLoginButton } from "react-social-login-buttons"
 import { useGoogleLogin } from "@react-oauth/google"
-
-
+import Loader from "../Loader/loader"
 const Login = () => {
 
   const [userdetail, setuserdetail] = useState({
     password:"",
     email:"",
   })
+
+  const [isLoading, setisLoading] = useState(false)
 
   const [Show, setShow] = useState(false)
 
@@ -43,7 +44,7 @@ const Login = () => {
       return;
     }
     try {
-
+      setisLoading(true)
       console.log("Data login:", userdetail);
       const response = await axios.post(`${import.meta.env.VITE_BASE_SERVER_URL}/user/login`,userdetail 
       );
@@ -52,8 +53,10 @@ const Login = () => {
 
       localStorage.setItem("token",response.data.token);
       navigate("/home")
+      setisLoading(false)
     } catch (error:any) {
       toast.error(error.response?.data?.message || "Login failed");
+      setisLoading(false)
     }
   }
 
@@ -81,12 +84,15 @@ const Login = () => {
 
         localStorage.setItem("token",response.data.token);
         navigate("/home")
+        setisLoading(false)
       } catch (error:any) {
-        console.log(error);
         toast.error(error.response?.data?.message || "Google login failed");
+        console.log(error);
+        setisLoading(false)
       }
     },
     onError:(error:any)=>{
+      setisLoading(false)
       console.log(error);
       toast.error("Google login cancelled or failed");
     }
@@ -98,7 +104,10 @@ const Login = () => {
         <h2>Login..</h2>
         <div className={styles.social}>
           <div><FacebookLoginButton></FacebookLoginButton></div>
-          <div onClick={() => handleLoginWithGoogle()}>
+          <div onClick={() => {
+            setisLoading(true)
+            handleLoginWithGoogle()
+          }}>
             <GoogleLoginButton></GoogleLoginButton>
           </div>
         </div>
@@ -116,7 +125,7 @@ const Login = () => {
             setShow(!Show)
           }}>{Show ? "Hide" : "Show"}</button>
           </div>
-          <button onClick={handleLogin}>Login</button>
+          <button onClick={handleLogin}>{isLoading ? <Loader/>:"Login"}</button>
         </div>
         <div className={styles.footer}>
         <Link to="/signup">Don't have account? Sign Up</Link>
